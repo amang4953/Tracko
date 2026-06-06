@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracko - Premium Glassmorphic Habit Tracker</title>
+  <meta name="description" content="A premium glassmorphic habit tracker dashboard to monitor daily and weekly habits with visual charts and mental state tracking.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js for dashboard charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Top Dashboard Navigation / Header Bar -->
+  <header class="dashboard-header glass-panel">
+    <div class="header-brand">
+      <div style="display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap;">
+        <h1 class="tracker-main-title">Tracko</h1>
+        <span class="author-tagline" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-family: var(--font-title); opacity: 0.85;">by Aman Gupta</span>
+      </div>
+      <h2 id="current-month-subtitle" class="tracker-sub-title">--JANUARY--</h2>
+    </div>
+    <div class="header-actions">
+      <!-- Dark / Light Mode Toggle Switch -->
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+        <span class="sun-icon">☀️</span>
+        <span class="moon-icon">🌙</span>
+      </button>
+      <button id="btn-add-habit" class="sheet-btn btn-primary-sheet">+ Add New Habit</button>
+    </div>
+  </header>
+
+  <div class="dashboard-container">
+    
+    <!-- Row 1, Panel 1: Calendar Settings -->
+    <section class="glass-panel calendar-settings-card">
+      <div class="card-header-title">CALENDAR & THEME</div>
+      <div class="calendar-settings-box">
+        <div class="settings-row">
+          <label for="year-select" class="settings-label">YEAR</label>
+          <div class="settings-value">
+            <select id="year-select" class="sheet-select">
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-row">
+          <label for="month-select" class="settings-label">MONTH</label>
+          <div class="settings-value">
+            <select id="month-select" class="sheet-select">
+              <option value="0" selected>JANUARY</option>
+              <option value="1">FEBRUARY</option>
+              <option value="2">MARCH</option>
+              <option value="3">APRIL</option>
+              <option value="4">MAY</option>
+              <option value="5">JUNE</option>
+              <option value="6">JULY</option>
+              <option value="7">AUGUST</option>
+              <option value="8">SEPTEMBER</option>
+              <option value="9">OCTOBER</option>
+              <option value="10">NOVEMBER</option>
+              <option value="11">DECEMBER</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-row palette-row">
+          <span class="settings-label">THEME</span>
+          <div class="settings-value palette-container">
+            <div class="palette-selector-row">
+              <button class="palette-btn active" data-palette="indigo" style="background: #6366f1;" title="Indigo Dream"></button>
+              <button class="palette-btn" data-palette="emerald" style="background: #10b981;" title="Emerald Forest"></button>
+              <button class="palette-btn" data-palette="rose" style="background: #ec4899;" title="Rose Sakura"></button>
+              <button class="palette-btn" data-palette="sunset" style="background: #f59e0b;" title="Sunset Amber"></button>
+              <button class="palette-btn" data-palette="neon" style="background: linear-gradient(135deg, #00f2fe, #f355da);" title="Cyber Neon (Dark Only)"></button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-row" style="border: none; gap: 0.5rem; background: transparent; margin-top: 0.5rem; padding: 0;">
+          <button id="btn-export-data" class="sheet-btn" style="flex: 1; padding: 0.4rem;" title="Export Habit Data">Export Data</button>
+          <button id="btn-import-data" class="sheet-btn" style="flex: 1; padding: 0.4rem;" title="Import Habit Data">Import Data</button>
+          <input type="file" id="import-file-input" style="display: none;" accept=".json">
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 1, Panel 2: Daily Progress Chart -->
+    <section class="glass-panel daily-progress-card">
+      <div class="chart-title">Daily Progress</div>
+      <div class="chart-container-box">
+        <canvas id="chart-daily"></canvas>
+      </div>
+    </section>
+
+    <!-- Row 1, Panel 3: Weekly Progress Chart -->
+    <section class="glass-panel weekly-progress-card">
+      <div class="chart-title">Weekly Progress</div>
+      <div class="chart-container-box">
+        <canvas id="chart-weekly"></canvas>
+      </div>
+    </section>
+
+    <!-- Row 2: Habits Table -->
+    <section class="glass-panel habit-grid-section">
+      <div class="card-header-title" style="margin-bottom: 0.75rem;">HABITS TRACKING GRID</div>
+      <div id="empty-habits-notice" class="empty-notice" style="display:none;">
+        <p>No habits added yet. Click <strong>+ Add New Habit</strong> to get started!</p>
+      </div>
+      <div class="grid-table-container" id="habit-table-wrapper">
+        <table class="habit-table" id="habit-grid-table">
+          <thead>
+            <!-- Populated dynamically via app.js -->
+          </thead>
+          <tbody id="habit-grid-body">
+            <!-- Populated dynamically via app.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Row 3, Panel 1: Mental State Tracking -->
+    <section class="glass-panel mental-state-section">
+      <div class="chart-title" style="margin-bottom: 0.75rem;">Mental State Trends</div>
+      
+      <!-- Mental Grid Table (aligned with days columns) -->
+      <div class="mental-grid-container">
+        <table class="mental-grid-table" id="mental-grid-table">
+          <thead>
+            <!-- Days header populated dynamically -->
+          </thead>
+          <tbody>
+            <tr id="mental-row-mood">
+              <!-- Mood row cells populated dynamically -->
+            </tr>
+            <tr id="mental-row-motivation">
+              <!-- Motivation row cells populated dynamically -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Chart directly below the numbers -->
+      <div class="mental-chart-container">
+        <canvas id="chart-mental"></canvas>
+      </div>
+    </section>
+
+    <!-- Row 3, Panel 2: Overall Analytics & Donut -->
+    <section class="glass-panel overall-analytics-card">
+      <div class="chart-title" style="text-align: center; margin-bottom: 0.5rem;">OVERALL ANALYTICS</div>
+      
+      <div class="donut-container">
+        <div style="width: 120px; height: 120px; position: relative; margin: 0 auto;">
+          <canvas id="chart-overall"></canvas>
+          <div id="donut-percentage-label" class="donut-center-pct">0%</div>
+        </div>
+      </div>
+
+      <div class="stats-counter-grid">
+        <div class="counter-box goal">
+          <span class="counter-label">GOAL</span>
+          <span id="metric-goal" class="counter-val">0</span>
+        </div>
+        <div class="counter-box completed">
+          <span class="counter-label">DONE</span>
+          <span id="metric-completed" class="counter-val">0</span>
+        </div>
+        <div class="counter-box left">
+          <span class="counter-label">LEFT</span>
+          <span id="metric-left" class="counter-val">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 3, Panel 3: Top 10 Daily Habits Leaderboard -->
+    <section class="glass-panel leaderboard-section">
+      <div class="chart-title" style="margin-bottom: 0.75rem; text-align: center;">TOP 10 HABITS</div>
+      <div class="leaderboard-container-list" id="leaderboard-list">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Add/Edit Habit Modal -->
+  <div id="habit-modal-overlay" class="modal-overlay" style="display:none;">
+    <div class="modal-box glass-panel">
+      <div class="modal-header">
+        <span id="modal-title-text">ADD NEW HABIT</span>
+        <button id="btn-modal-close" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="habit-name-input" class="modal-label">Habit Name</label>
+        <input type="text" id="habit-name-input" class="modal-input" placeholder="e.g. Wake Up at 6:00 AM ⏰" maxlength="80">
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-cancel" class="sheet-btn">Cancel</button>
+        <button id="btn-modal-save" class="sheet-btn btn-primary-sheet">Save Habit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
