@@ -47,9 +47,25 @@
             <select id="year-select" class="sheet-select">
               <option value="2024">2024</option>
               <option value="2025">2025</option>
-              <option value="2026" selected>2026</option>
+              <option value="2026">2026</option>
               <option value="2027">2027</option>
               <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+              <option value="2031">2031</option>
+              <option value="2032">2032</option>
+              <option value="2033">2033</option>
+              <option value="2034">2034</option>
+              <option value="2035" selected>2035</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-row">
+          <label for="view-select" class="settings-label">VIEW</label>
+          <div class="settings-value">
+            <select id="view-select" class="sheet-select">
+              <option value="monthly" selected>MONTHLY</option>
+              <option value="yearly">YEARLY</option>
             </select>
           </div>
         </div>
@@ -88,6 +104,10 @@
           <button id="btn-export-data" class="sheet-btn" style="flex: 1; padding: 0.4rem;" title="Export Habit Data">Export Data</button>
           <button id="btn-import-data" class="sheet-btn" style="flex: 1; padding: 0.4rem;" title="Import Habit Data">Import Data</button>
           <input type="file" id="import-file-input" style="display: none;" accept=".json">
+        </div>
+        <div class="settings-row" style="border: none; gap: 0.5rem; background: transparent; margin-top: 0.25rem; padding: 0;">
+          <button id="btn-clear-month" class="sheet-btn" style="flex: 1; padding: 0.4rem; color: var(--accent-danger);" title="Clear all ticks, mood, and motivation for this month">Clear Month</button>
+          <button id="btn-clear-year" class="sheet-btn" style="flex: 1; padding: 0.4rem; color: var(--accent-danger);" title="Clear all ticks, mood, and motivation for the entire year">Clear Year</button>
         </div>
       </div>
     </section>
